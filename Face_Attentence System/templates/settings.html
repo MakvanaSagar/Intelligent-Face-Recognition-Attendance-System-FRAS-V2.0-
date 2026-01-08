@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="header">
+    <div class="page-title">System <span>Settings</span></div>
+</header>
+
+<div style="max-width: 600px; margin: 0 auto;">
+    <div class="card">
+
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom: 2rem;">
+            <div style="padding:10px; background:rgba(37, 211, 102, 0.1); border-radius:10px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+                    </path>
+                </svg>
+            </div>
+            <div>
+                <h2 style="margin:0;">WhatsApp Configuration</h2>
+                <p style="margin:0; color:var(--text-muted); font-size:0.9rem;">Meta Cloud API Integration</p>
+            </div>
+        </div>
+
+        {% if message %}
+        <div
+            style="background: rgba(0, 255, 157, 0.1); border: 1px solid var(--success); color: var(--success); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+            ✓ {{ message }}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display:block; margin-bottom:0.8rem; color:var(--text-color);">Phone Number ID</label>
+                <input type="text" name="phone_number_id" value="{{ phone_id }}" placeholder="e.g. 100609346..."
+                    required>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <label style="display:block; margin-bottom:0.8rem; color:var(--text-color);">Permanent Access
+                    Token</label>
+                <input type="password" name="access_token" value="{{ token }}" placeholder="EAAG..." required>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary">SAVE CONFIGURATION</button>
+                <a href="/" class="btn btn-secondary">CANCEL</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="card" style="margin-top: 2rem; border-color: rgba(255, 255, 255, 0.05); background: rgba(0,0,0,0.2);">
+        <h4 style="color:var(--text-muted); margin-top:0;">Setup Guide</h4>
+        <ol style="margin-left: 1.5rem; color: var(--text-muted); font-size: 0.9rem; line-height: 1.8;">
+            <li>Go to <a href="https://developers.facebook.com/" target="_blank"
+                    style="color:var(--primary-color);">Meta Developers</a>.</li>
+            <li>Create an App > Select <b>Business</b> > <b>WhatsApp</b> setup.</li>
+            <li>Copy the <b>Phone Number ID</b> and generate a <b>User Access Token</b>.</li>
+        </ol>
+    </div>
+</div>
+{% endblock %}

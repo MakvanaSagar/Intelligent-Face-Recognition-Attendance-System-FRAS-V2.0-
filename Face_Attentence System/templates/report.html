@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content-wrapper" style="max-width: 100%; padding: 2rem 4rem;">
+    <header style="margin-bottom: 2rem;">
+        <h1 class="section-title" style="font-size:2.5rem; margin:0;">Database <span
+                style="color:var(--primary-color)">Records</span></h1>
+        <p style="color:var(--text-muted)">Manage registered users and export detailed logs.</p>
+    </header>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by Name, Role or ID..."
+            onkeyup="filterTable()">
+        <span class="search-icon">🔍</span>
+    </div>
+
+    <div class="card" style="padding:0; overflow:hidden;">
+        <div class="table-container">
+            <table id="userTable">
+                <thead>
+                    <tr>
+                        <th>User Identity</th>
+                        <th>Role</th>
+                        <th>Contact</th>
+                        <th>History</th>
+                        <th>Export Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div
+                                    style="width:40px; height:40px; background:rgba(0,243,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--primary-color); font-weight:bold;">
+                                    {{ user.name[:1] }}
+                                </div>
+                                <div>
+                                    <div style="color:white; font-weight:600;">{{ user.name }}</div>
+                                    <div
+                                        style="font-size:0.8rem; font-family:monospace; color:var(--text-muted); opacity:0.7;">
+                                        UID: {{ user.id }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="status-badge"
+                                style="background: rgba(188, 19, 254, 0.1); color: var(--secondary-color); border: 1px solid rgba(188, 19, 254, 0.2);">
+                                {{ user.role }}
+                            </span>
+                        </td>
+                        <td style="color:var(--text-muted);">{{ user.phone }}</td>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:5px;">
+                                <span
+                                    style="font-size:1.2rem; {{ 'color:var(--success);' if user.total_days > 0 else 'color:var(--text-muted);' }}">●</span>
+                                <span style="color:white; font-weight:bold;">{{ user.total_days }}</span> days
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 0.8rem;">
+                                <a href="/download_pdf_report/{{ user.id }}" class="btn btn-secondary"
+                                    style="padding: 8px 16px; font-size: 0.8rem; height:36px;" title="Download PDF">
+                                    📄 PDF
+                                </a>
+                                <a href="/download_report/{{ user.id }}" class="btn btn-primary"
+                                    style="padding: 8px 16px; font-size: 0.8rem; background:var(--primary-color); color:black; height:36px;"
+                                    title="Download Excel">
+                                    📥 XLS
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                            No users registered in the system.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterTable() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toUpperCase();
+        const table = document.getElementById("userTable");
+        const tr = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < tr.length; i++) {
+            let found = false;
+            const cells = tr[i].getElementsByTagName("td");
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j]) {
+                    const txtValue = cells[j].textContent || cells[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            tr[i].style.display = found ? "" : "none";
+        }
+    }
+</script>
+{% endblock %}

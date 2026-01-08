@@ -1,0 +1,13 @@
+flask
+opencv-contrib-python-headless
+numpy
+Pillow
+firebase-admin
+openpyxl
+pandas
+twilio
+xhtml2pdf
+
+pymongo
+requests
+gunicorn

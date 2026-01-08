@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="header">
+    <div class="page-title">Live <span>Scanner</span></div>
+</header>
+
+
+<div class="content-wrapper">
+    <div style="display: flex; flex-wrap: wrap; gap: 2rem; align-items: flex-start;">
+
+        <!-- Camera Section (Left) -->
+        <div class="card" style="flex: 2; min-width: 300px; padding: 1.5rem;">
+            <div class="camera-container"
+                style="background: #000; display: flex; justify-content: center; align-items: center; min-height: 480px; position: relative;">
+                <div class="scan-line"></div>
+                <video id="video" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+                <canvas id="canvas" style="display:none;"></canvas>
+
+                <!-- Face Overlay -->
+                <div class="face-overlay"
+                    style="position: absolute; width: 220px; height: 220px; border: 2px solid rgba(0, 243, 255, 0.5); border-radius: 24px; box-shadow: 0 0 30px rgba(0, 243, 255, 0.2); pointer-events: none; transition: all 0.3s;">
+                    <!-- Corners -->
+                    <div
+                        style="position: absolute; top: -2px; left: -2px; width: 20px; height: 20px; border-top: 4px solid var(--primary-color); border-left: 4px solid var(--primary-color); border-radius: 4px 0 0 0;">
+                    </div>
+                    <div
+                        style="position: absolute; top: -2px; right: -2px; width: 20px; height: 20px; border-top: 4px solid var(--primary-color); border-right: 4px solid var(--primary-color); border-radius: 0 4px 0 0;">
+                    </div>
+                    <div
+                        style="position: absolute; bottom: -2px; left: -2px; width: 20px; height: 20px; border-bottom: 4px solid var(--primary-color); border-left: 4px solid var(--primary-color); border-radius: 0 0 0 4px;">
+                    </div>
+                    <div
+                        style="position: absolute; bottom: -2px; right: -2px; width: 20px; height: 20px; border-bottom: 4px solid var(--primary-color); border-right: 4px solid var(--primary-color); border-radius: 0 0 4px 0;">
+                    </div>
+
+                    <!-- Text -->
+                    <div
+                        style="position: absolute; bottom: 15px; width: 100%; text-align: center; color: var(--primary-color); font-weight: 800; letter-spacing: 2px; text-shadow: 0 0 10px rgba(0,243,255,0.5); font-size: 0.9rem;">
+                        SCANNING
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; display: flex; justify-content: center;">
+                <button id="mark-btn" class="btn btn-primary" style="min-width: 200px;">INITIATE SCAN</button>
+            </div>
+            <div id="message" style="margin-top: 1.5rem; text-align: center; font-weight: 600; min-height: 24px;"></div>
+        </div>
+
+        <!-- Recent Activity Section (Right) -->
+        <div class="card"
+            style="flex: 1; min-width: 300px; height: 100%; max-height: 600px; display: flex; flex-direction: column;">
+            <h3
+                style="margin-top: 0; color: var(--secondary-color); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; display:flex; align-items:center; gap:10px;">
+                <div
+                    style="width:10px; height:10px; background:var(--secondary-color); border-radius:50%; box-shadow:0 0 10px var(--secondary-color);">
+                </div>
+                Recent Activity
+            </h3>
+
+            <div id="activity-log" style="flex: 1; overflow-y: auto; padding-right: 5px;">
+                <!-- Placeholder Items -->
+                <div
+                    style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 15px; animation: fadeInUp 0.5s;">
+                    <div
+                        style="width: 30px; height: 30px; background: rgba(0,255,157,0.1); border-radius: 50%; display:flex; align-items:center; justify-content:center; color: var(--success);">
+                        ✓
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.95rem;">System Ready</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Waiting for biometric input...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const markBtn = document.getElementById('mark-btn');
+    const messageDiv = document.getElementById('message');
+    const activityLog = document.getElementById('activity-log');
+
+    // Access Webcam
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            video.srcObject = stream;
+        })
+        .catch(err => {
+            console.error("Error accessing camera: ", err);
+            showMessage("Error accessing camera.", false);
+        });
+
+    markBtn.addEventListener('click', () => {
+        // Capture frame
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+
+        const imageData = canvas.toDataURL('image/jpeg');
+
+        markBtn.innerText = "SCANNING...";
+        markBtn.disabled = true;
+        markBtn.style.opacity = "0.7";
+
+        fetch('/api/mark_attendance', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ image: imageData })
+        })
+            .then(response => response.json())
+            .then(data => {
+                markBtn.innerText = "INITIATE SCAN";
+                markBtn.disabled = false;
+                markBtn.style.opacity = "1";
+
+                showMessage(data.message, data.success);
+
+
+                if (data.success) {
+                    addLog(data.message);
+
+                    // Show WhatsApp Notification if present
+                    if (data.whatsapp_notification) {
+                        showWhatsAppToast(data.whatsapp_notification);
+                    }
+                }
+            })
+            .catch(err => {
+                markBtn.innerText = "INITIATE SCAN";
+                markBtn.disabled = false;
+                markBtn.style.opacity = "1";
+                showMessage("Server connection failed", false);
+            });
+    });
+
+    function showWhatsAppToast(msg) {
+        const toast = document.createElement('div');
+        toast.style.position = 'fixed';
+        toast.style.top = '20px';
+        toast.style.right = '20px';
+        toast.style.background = '#25D366';
+        toast.style.color = 'white';
+        toast.style.padding = '16px 24px';
+        toast.style.borderRadius = '12px';
+        toast.style.boxShadow = '0 10px 30px rgba(37, 211, 102, 0.4)';
+        toast.style.zIndex = '9999';
+        toast.style.display = 'flex';
+        toast.style.alignItems = 'center';
+        toast.style.gap = '12px';
+        toast.style.animation = 'slideIn 0.5s ease-out';
+        toast.style.fontWeight = '600';
+        toast.style.minWidth = '300px';
+
+        toast.innerHTML = `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="0">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            <div>
+                <div style="font-size: 0.8rem; opacity: 0.9;">WhatsApp Notification</div>
+                <div style="font-size: 0.95rem;">${msg}</div>
+            </div>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Remove after 5 seconds
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.5s ease-in forwards';
+            setTimeout(() => toast.remove(), 500);
+        }, 5000);
+    }
+
+    function showMessage(msg, isSuccess) {
+        messageDiv.innerText = msg;
+        messageDiv.style.color = isSuccess ? 'var(--success)' : 'var(--error)';
+        messageDiv.style.textShadow = isSuccess ? '0 0 10px rgba(0,255,157,0.3)' : '0 0 10px rgba(255,0,85,0.3)';
+    }
+
+    function addLog(text) {
+        const time = new Date().toLocaleTimeString();
+        const div = document.createElement('div');
+        div.style.padding = '1rem';
+        div.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+        div.style.gap = '10px';
+        div.style.animation = 'fadeIn 0.5s ease-out';
+
+        // Simple parsing to mimic "Name (Check-in/out: Time)"
+        let statusColor = 'var(--primary-color)';
+        if (text.includes('Check-in')) statusColor = 'var(--success)';
+        if (text.includes('Check-out')) statusColor = 'var(--secondary-color)';
+
+        div.innerHTML = `
+            <div style="width: 8px; height: 8px; background: ${statusColor}; border-radius: 50%; box-shadow: 0 0 5px ${statusColor};"></div>
+            <div>
+               <div style="font-size: 0.9rem; color: var(--text-color);">${text.replace('Result: ', '')}</div>
+               <div style="font-size: 0.75rem; color: var(--text-muted);">${time}</div>
+            </div>
+        `;
+
+        activityLog.insertBefore(div, activityLog.firstChild);
+    }
+</script>
+
+<style>
+    @media (max-width: 900px) {
+        div[style*="grid-template-columns"] {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+{% endblock %}

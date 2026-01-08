@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Hero Section -->
+
+
+
+    <header class="hero-section">
+        <!-- Hero Content Extended & Animated -->
+        <div class="hero-content animate-float-box premium-glass-box"
+            style="max-width: 900px; margin: 0 auto; position: relative; z-index: 2; padding: 3rem; border-radius: 20px;">
+
+            <h1 class="section-title reveal-text"
+                style="font-size: 4.5rem; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -1px;">
+                <span
+                    style="background: linear-gradient(90deg, #fff, #a5f3fc, #fff); background-size: 200%; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradientFlow 3s linear infinite;">Face
+                    Identity</span>
+                <span class="text-gradient-flow" style="position:relative; display:inline-block;">V2.0</span>
+            </h1>
+
+            <p id="type-text-1" class="typing-cursor"
+                style="font-size: 1.25rem; color: var(--text-muted); margin-bottom: 1.5rem; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.6; min-height: 3.2em;">
+                <!-- Content will be typed by JS -->
+            </p>
+
+            <p id="type-text-2" class="typing-cursor"
+                style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto; min-height: 3.2em; display:none;">
+                <!-- Content will be typed by JS -->
+            </p>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const text1 = "Experience the next evolution in biometric security. FRAS V2.0 combines state-of-the-art AI facial recognition with real-time liveness detection to ensure uncompromising security for your organization.";
+                    const text2 = "Seamlessly scalable, infinitely secure, and designed for the future of workspace management. From automated attendance logging to detailed analytics, we empower you to manage your workforce with absolute precision and ease.";
+
+                    const el1 = document.getElementById('type-text-1');
+                    const el2 = document.getElementById('type-text-2');
+
+                    let i = 0;
+
+                    function typeWriter1() {
+                        if (i < text1.length) {
+                            el1.innerHTML += text1.charAt(i);
+                            i++;
+                            setTimeout(typeWriter1, 20); // Speed
+                        } else {
+                            el1.classList.remove('typing-cursor');
+                            el2.style.display = 'block';
+                            i = 0;
+                            setTimeout(typeWriter2, 300); // Delay before next
+                        }
+                    }
+
+                    function typeWriter2() {
+                        if (i < text2.length) {
+                            el2.innerHTML += text2.charAt(i);
+                            i++;
+                            setTimeout(typeWriter2, 20);
+                        } else {
+                            el2.classList.remove('typing-cursor');
+                        }
+                    }
+
+                    // Start
+                    setTimeout(typeWriter1, 1000); // Initial delay
+                });
+            </script>
+
+            <div class="hero-actions reveal-text delay-3"
+                style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/attendance" class="btn btn-primary"
+                    style="padding: 18px 40px; font-size: 1.1rem; border-radius: 12px; font-weight: 600; letter-spacing: 0.5px; box-shadow: 0 10px 30px rgba(0, 243, 255, 0.2);">
+                    Start Verification
+                </a>
+                <a href="/login" class="btn btn-secondary"
+                    style="padding: 18px 40px; font-size: 1.1rem; border-radius: 12px; font-weight: 600; letter-spacing: 0.5px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
+                    Admin Console
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Access Portal -->
+    <section id="access-portal" class="content-wrapper">
+        <div style="text-align:center; margin-bottom:3rem;">
+            <h2 style="font-size:2rem; margin-bottom:0.5rem;">Select User Type</h2>
+            <p style="color:var(--text-muted)">Choose your role to proceed with attendance marking.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+            <!-- Student Option -->
+            <a href="/attendance?mode=Student" onclick="playClick()" style="text-decoration: none; color: inherit;">
+                <div class="user-select-card delay-1 fade-in">
+                    <div class="big-icon" style="color:var(--primary-color)">🎓</div>
+                    <h2 style="margin:0 0 1rem 0;">Student Portal</h2>
+                    <p style="color:var(--text-muted); line-height:1.6;">
+                        Digital classroom attendance.<br>
+                        Instant verification for lectures.
+                    </p>
+                </div>
+            </a>
+
+            <!-- Staff Option -->
+            <a href="/attendance?mode=Staff" onclick="playClick()" style="text-decoration: none; color: inherit;">
+                <div class="user-select-card delay-2 fade-in">
+                    <div class="big-icon" style="color:var(--secondary-color)">💼</div>
+                    <h2 style="margin:0 0 1rem 0;">Staff Entry</h2>
+                    <p style="color:var(--text-muted); line-height:1.6;">
+                        Corporate biometric logging.<br>
+                        Secure check-in for employees.
+                    </p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+
+    <!-- Features Section (Adding Length) -->
+    <section class="content-wrapper reveal">
+        <div style="margin: 4rem 0;">
+            <h2
+                style="font-size:2rem; margin-bottom:2rem; border-left: 4px solid var(--primary-color); padding-left:1rem;">
+                System Capabilities</h2>
+
+            <div class="feature-grid" style="padding:0; margin:0;">
+                <div class="feature-card reveal" style="transition-delay: 0.1s;">
+                    <div style="font-size:2rem; margin-bottom:1rem; color: #00ff9d;">🛡️</div>
+                    <h3>Secure & Encrypted</h3>
+                    <p style="color:var(--text-muted)">All biometric data is processed locally with high-grade
+                        encryption. No cloud dependencies.</p>
+                </div>
+
+                <div class="feature-card reveal" style="transition-delay: 0.2s;">
+                    <div style="font-size:2rem; margin-bottom:1rem; color: #ff0055;">⚡</div>
+                    <h3>Real-time Processing</h3>
+                    <p style="color:var(--text-muted)">LBPH algorithms ensure recognition in under 200ms for seamless
+                        flow.</p>
+                </div>
+
+                <div class="feature-card reveal" style="transition-delay: 0.3s;">
+                    <div style="font-size:2rem; margin-bottom:1rem; color: #bc13fe;">📊</div>
+                    <h3>Smart Analytics</h3>
+                    <p style="color:var(--text-muted)">Generate detailed PDF & Excel reports for specific users with a
+                        single click.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section (Mock) -->
+    <section class="reveal" style="background: rgba(0,0,0,0.2); padding: 4rem 0;">
+        <div class="content-wrapper"
+            style="display:grid; grid-template-columns: repeat(4, 1fr); gap:1rem; text-align:center;">
+
+            <div>
+                <h1 style="font-size:3rem; margin:0; color:var(--primary-color);"><span class="counter"
+                        data-target="98">0</span>%</h1>
+                <p style="color:var(--text-muted)">Accuracy</p>
+            </div>
+            <div>
+                <h1 style="font-size:3rem; margin:0; color:white;">24/7</h1>
+                <p style="color:var(--text-muted)">System Uptime</p>
+            </div>
+            <div>
+                <h1 style="font-size:3rem; margin:0; color:var(--secondary-color);"><span class="counter"
+                        data-target="100">0</span>+</h1>
+                <p style="color:var(--text-muted)">Active Users</p>
+            </div>
+            <div>
+                <h1 style="font-size:3rem; margin:0; color:var(--success);"><span class="counter" data-target="0.2"
+                        data-decimals="1">0</span>s</h1>
+                <p style="color:var(--text-muted)">Latency</p>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

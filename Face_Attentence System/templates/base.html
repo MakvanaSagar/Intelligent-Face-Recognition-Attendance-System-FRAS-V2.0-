@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRAS - Face Identity V2.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=6">
+    <!-- Load Firebase SDK (Optional) -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+</head>
+
+
+<body>
+    <!-- Global Animated Background -->
+    <div class="bg-container">
+        <div class="bg-shape shape-1"></div>
+        <div class="bg-shape shape-2"></div>
+        <div class="bg-shape shape-3"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Glass Sidebar -->
+        <!-- Sidebar Removed as per request to move items to Top Header -->
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header with Navigation Pills -->
+            <!-- Header with Navigation Pills -->
+            <header class="top-header"
+                style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 3rem; background: rgba(0,0,0,0.2); backdrop-filter: blur(10px); margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.05);">
+
+                <!-- Brand (Top Left) -->
+                <div class="header-brand"
+                    style="display: flex; align-items: center; gap: 12px; font-size: 1.5rem; font-weight: 800; color: white;">
+
+                    FRAS <span style="color: var(--primary-color);">V2.0</span>
+                </div>
+
+                <!-- Navigation Pills (Center) -->
+                <div class="header-nav" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                    <a href="/" class="header-link-item">Dashboard</a>
+                    <a href="/attendance" class="header-link-item">Live & Log</a>
+                    <a href="/register" class="header-link-item">Registration</a>
+                    <a href="/report" class="header-link-item">Database & Reports</a>
+                    <a href="/login" class="header-link-item">Admin Console</a>
+                </div>
+
+                <!-- Theme Toggle (Top Right) -->
+                <div id="theme-toggle-top"
+                    style="cursor: pointer; padding: 10px 24px; border-radius: 50px; background: rgba(255, 255, 255, 0.1); color: var(--text-muted); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.05);">
+                    Robust Theme System
+                </div>
+            </header>
+
+            <div id="dynamic-content">
+                {% block content %}{% endblock %}
+            </div>
+
+            <!-- Long & Common Footer -->
+            <footer class="main-footer">
+                <div class="footer-content">
+                    <div class="footer-section brand-section">
+                        <h3>FRAS <span>V2.0</span></h3>
+                        <p>Advanced Face Recognition Attendance System leveraging AI for secure, real-time workforce
+                            management.</p>
+                        <div class="social-links">
+                            <a href="#">Twitter</a>
+                            <a href="#">LinkedIn</a>
+                            <a href="#">GitHub</a>
+                        </div>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Quick Links</h4>
+                        <ul>
+                            <li><a href="/">Dashboard</a></li>
+                            <li><a href="/attendance">Live Status</a></li>
+                            <li><a href="/register">New Registration</a></li>
+                            <li><a href="/report">Analytics</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#">Documentation</a></li>
+                            <li><a href="#">API Access</a></li>
+                            <li><a href="#">System Status</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-section">
+                        <h4>Contact</h4>
+                        <ul>
+                            <li>support@fras-security.com</li>
+                            <li>+1 (555) 123-4567</li>
+                            <li>123 Tech Park, AI City</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2026 FRAS V2.0 | All Rights Reserved. Designed with <span
+                            style="color: var(--primary-color);">♥</span> for Security.</p>
+                </div>
+            </footer>
+
+        </main>
+    </div>
+
+
+
+    <!-- Toast Message Support -->
+    <div id="toast"
+        style="position:fixed; bottom:20px; right:20px; background:var(--card-bg); color:white; padding:1rem 2rem; border-radius:8px; border:1px solid var(--primary-color); display:none; z-index:1000; backdrop-filter:blur(10px);">
+    </div>
+
+
+
+
+    <!-- 🌟 Custom Cursor Elements 🌟 -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        // --- 🌟 Advanced Circle Cursor Logic 🌟 ---
+
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+
+        if (cursorDot && cursorOutline) {
+            window.addEventListener('mousemove', function (e) {
+                const posX = e.clientX;
+                const posY = e.clientY;
+                cursorDot.style.left = `${posX}px`;
+                cursorDot.style.top = `${posY}px`;
+                cursorOutline.animate({
+                    left: `${posX}px`,
+                    top: `${posY}px`
+                }, { duration: 500, fill: "forwards" });
+            });
+
+            const interactiveSelectors = 'a, button, input, select, textarea, .card, .header-link-item, #theme-toggle-top';
+            document.body.addEventListener('mouseover', (e) => {
+                if (e.target.closest(interactiveSelectors)) document.body.classList.add('hovering');
+            });
+            document.body.addEventListener('mouseout', (e) => {
+                if (e.target.closest(interactiveSelectors)) document.body.classList.remove('hovering');
+            });
+
+            document.addEventListener('mousedown', () => document.body.classList.add('clicking'));
+            document.addEventListener('mouseup', () => document.body.classList.remove('clicking'));
+        }
+
+        // Unified Theme Toggle Logic
+        const themeToggleTop = document.getElementById('theme-toggle-top');
+        const sunIconTop = document.getElementById('sun-icon-top');
+        const moonIconTop = document.getElementById('moon-icon-top');
+
+        const themeToggleSidebar = document.getElementById('theme-toggle-sidebar');
+        const themeTextSidebar = document.getElementById('theme-text-sidebar');
+
+
+        // Check saved theme and apply on load
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-mode');
+            updateThemeIcons(true);
+        }
+
+        if (themeToggleTop) themeToggleTop.addEventListener('click', toggleTheme);
+        if (themeToggleSidebar) themeToggleSidebar.addEventListener('click', toggleTheme);
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateThemeIcons(isLight);
+        }
+
+        function updateThemeIcons(isLight) {
+            // Update Top Text Toggle
+            if (themeToggleTop) {
+                if (isLight) {
+                    // Light Mode - Update button style
+                    themeToggleTop.style.background = 'rgba(0,0,0,0.05)';
+                    themeToggleTop.style.color = '#333';
+                    themeToggleTop.style.borderColor = 'rgba(0,0,0,0.1)';
+                    themeToggleTop.innerText = 'Go Dark'; // Dynamic Text if desired, or keep sticky
+                } else {
+                    // Dark Mode - Update button style
+                    themeToggleTop.style.background = 'rgba(255,255,255,0.1)';
+                    themeToggleTop.style.color = 'var(--text-muted)';
+                    themeToggleTop.style.borderColor = 'rgba(255,255,255,0.05)';
+                    themeToggleTop.innerText = 'Robust Theme System'; // Keep original text
+                }
+            }
+            // Update Sidebar Toggle (Text Only)
+            if (themeToggleSidebar && themeTextSidebar) {
+                if (isLight) {
+                    themeTextSidebar.innerText = 'Dark Mode';
+                    themeToggleSidebar.style.background = 'rgba(0,0,0,0.05)';
+                    themeToggleSidebar.style.color = '#333';
+                } else {
+                    themeTextSidebar.innerText = 'Light Mode';
+                    themeToggleSidebar.style.background = 'rgba(255,255,255,0.05)';
+                    themeToggleSidebar.style.color = 'var(--text-muted)';
+                }
+            }
+        }
+
+        // Scroll Reveal Logic
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Number Counter Logic
+        const counters = document.querySelectorAll('.counter');
+        const counterObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = +counter.getAttribute('data-target');
+                    const decimals = +counter.getAttribute('data-decimals') || 0;
+                    const duration = 2000; // Animation duration in ms
+                    const startTime = performance.now();
+
+                    const updateCounter = (currentTime) => {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+
+                        // Ease out function for smoother effect
+                        const easeOut = 1 - Math.pow(1 - progress, 3);
+
+                        const current = target * easeOut;
+
+                        if (decimals > 0) {
+                            counter.innerText = current.toFixed(decimals);
+                        } else {
+                            counter.innerText = Math.ceil(current);
+                        }
+
+                        if (progress < 1) {
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            counter.innerText = decimals > 0 ? target.toFixed(decimals) : target;
+                        }
+                    };
+
+                    requestAnimationFrame(updateCounter);
+                    observer.unobserve(counter);
+                }
+            });
+        }, { threshold: 0.5 });
+
+
+
+
+
+        counters.forEach(counter => counterObserver.observe(counter));
+
+
+        // AI Voice Feedback Logic (Click-to-Speak)
+        document.addEventListener('click', (e) => {
+            // Find closest interactive element
+            const target = e.target.closest('a, button, .user-select-card, input, select');
+
+            if (target) {
+                let textToSpeak = "";
+
+                // Determine text source
+                if (target.tagName.toLowerCase() === 'input' || target.tagName.toLowerCase() === 'select') {
+                    // For inputs, read placeholder or previous label if possible, default to "Input field"
+                    textToSpeak = target.placeholder || target.name || "Input field";
+                } else {
+                    // For buttons/links, read text content or aria-label
+                    textToSpeak = target.getAttribute('aria-label') || target.innerText || target.title;
+                }
+
+                // Clean up text
+                textToSpeak = textToSpeak ? textToSpeak.trim() : "";
+
+                if (textToSpeak) {
+                    // Cancel previous speech to avoid queue buildup
+                    window.speechSynthesis.cancel();
+
+                    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+
+                    // Customize Voice (Optional: select a specific voice if desired, otherwise default)
+                    // utterance.rate = 1.0; 
+                    // utterance.pitch = 1.0;
+
+                    // Speak
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
